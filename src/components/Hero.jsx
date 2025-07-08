@@ -12,12 +12,14 @@ gsap.registerPlugin(ScrollTrigger);
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [hasClicked, setHasClicked] = useState(false);
+  const [showTrailer, setShowTrailer] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
 
   const totalVideos = 4;
   const nextVdRef = useRef(null);
+  const trailerRef = useRef(null);
 
   const handleVideoLoad = () => {
     setLoadedVideos((prev) => prev + 1);
@@ -31,8 +33,14 @@ const Hero = () => {
 
   const handleMiniVdClick = () => {
     setHasClicked(true);
-
     setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
+  };
+
+  const handleWatchTrailer = () => {
+    setShowTrailer(true);
+    setTimeout(() => {
+      trailerRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   useGSAP(
@@ -86,7 +94,6 @@ const Hero = () => {
     <div className="relative h-dvh w-screen overflow-x-hidden">
       {loading && (
         <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          {/* https://uiverse.io/G4b413l/tidy-walrus-92 */}
           <div className="three-body">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
@@ -154,12 +161,14 @@ const Hero = () => {
               Enter the Metagame Layer <br /> Unleash the Play Economy
             </p>
 
-            <Button
-              id="watch-trailer"
-              title="Watch trailer"
-              leftIcon={<TiLocationArrow />}
-              containerClass="bg-yellow-300 flex-center gap-1"
-            />
+            <div onClick={handleWatchTrailer}>
+              <Button
+                id="watch-trailer"
+                title="Watch trailer"
+                leftIcon={<TiLocationArrow />}
+                containerClass="bg-yellow-300 flex-center gap-1 cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -167,6 +176,32 @@ const Hero = () => {
       <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black">
         G<b>A</b>MING
       </h1>
+
+      {showTrailer && (
+        <div
+          ref={trailerRef}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90"
+        >
+          <div className="relative w-full max-w-5xl px-4">
+            <iframe
+              width="100%"
+              height="500"
+              src="https://www.youtube.com/embed/Z5UO07yx4MA"
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full rounded-lg shadow-2xl border border-white"
+            ></iframe>
+            <button
+              onClick={() => setShowTrailer(false)}
+              className="absolute top-2 right-2 text-white text-xl bg-red-500 hover:bg-red-700 px-3 py-1 rounded"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
